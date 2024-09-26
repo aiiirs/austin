@@ -1,12 +1,12 @@
 package com.java3y.austin.support.utils;
 
+
 import cn.binarywang.wx.miniapp.api.WxMaService;
 import cn.binarywang.wx.miniapp.api.impl.WxMaServiceImpl;
 import cn.binarywang.wx.miniapp.config.impl.WxMaRedisBetterConfigImpl;
 import com.alibaba.fastjson.JSON;
 import com.google.common.base.Throwables;
 import com.java3y.austin.common.constant.CommonConstant;
-import com.java3y.austin.common.constant.SendAccountConstant;
 import com.java3y.austin.common.dto.account.WeChatMiniProgramAccount;
 import com.java3y.austin.common.dto.account.WeChatOfficialAccount;
 import com.java3y.austin.common.dto.account.sms.SmsAccount;
@@ -50,7 +50,7 @@ public class AccountUtils {
 
     @Bean
     public RedisTemplateWxRedisOps redisTemplateWxRedisOps() {
-        return new RedisTemplateWxRedisOps(redisTemplate);
+        return new RedisTemplateWxRedisOps(this.redisTemplate);
     }
 
     /**
@@ -119,10 +119,11 @@ public class AccountUtils {
      */
     public WxMpService initOfficialAccountService(WeChatOfficialAccount officialAccount) {
         WxMpService wxMpService = new WxMpServiceImpl();
-        WxMpRedisConfigImpl config = new WxMpRedisConfigImpl(redisTemplateWxRedisOps(), SendAccountConstant.OFFICIAL_ACCOUNT_ACCESS_TOKEN_PREFIX);
+        WxMpRedisConfigImpl config = new WxMpRedisConfigImpl(redisTemplateWxRedisOps(), ChannelType.OFFICIAL_ACCOUNT.getAccessTokenPrefix());
         config.setAppId(officialAccount.getAppId());
         config.setSecret(officialAccount.getSecret());
         config.setToken(officialAccount.getToken());
+        config.useStableAccessToken(true);
         wxMpService.setWxMpConfigStorage(config);
         return wxMpService;
     }
@@ -135,9 +136,10 @@ public class AccountUtils {
      */
     private WxMaService initMiniProgramService(WeChatMiniProgramAccount miniProgramAccount) {
         WxMaService wxMaService = new WxMaServiceImpl();
-        WxMaRedisBetterConfigImpl config = new WxMaRedisBetterConfigImpl(redisTemplateWxRedisOps(), SendAccountConstant.MINI_PROGRAM_TOKEN_PREFIX);
+        WxMaRedisBetterConfigImpl config = new WxMaRedisBetterConfigImpl(redisTemplateWxRedisOps(), ChannelType.MINI_PROGRAM.getAccessTokenPrefix());
         config.setAppid(miniProgramAccount.getAppId());
         config.setSecret(miniProgramAccount.getAppSecret());
+        config.useStableAccessToken(true);
         wxMaService.setWxMaConfig(config);
         return wxMaService;
     }

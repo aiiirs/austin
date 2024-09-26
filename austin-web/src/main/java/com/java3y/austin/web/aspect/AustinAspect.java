@@ -33,13 +33,12 @@ import java.util.List;
 @Component
 public class AustinAspect {
 
-    @Autowired
-    private HttpServletRequest request;
-
     /**
      * 同一个请求的KEY
      */
-    private final String requestIdKey = "request_unique_id";
+    private static final String REQUEST_ID_KEY = "request_unique_id";
+    @Autowired
+    private HttpServletRequest request;
 
     /**
      * 只切AustinAspect注解
@@ -79,7 +78,7 @@ public class AustinAspect {
         RequestLogDTO logVo = new RequestLogDTO();
         //设置请求唯一ID
         logVo.setId(IdUtil.fastUUID());
-        request.setAttribute(requestIdKey, logVo.getId());
+        request.setAttribute(REQUEST_ID_KEY, logVo.getId());
         logVo.setUri(request.getRequestURI());
         logVo.setMethod(request.getMethod());
         List<Object> args = Lists.newArrayList();
@@ -97,7 +96,7 @@ public class AustinAspect {
         logVo.setReferer(request.getHeader("referer"));
         logVo.setRemoteAddr(request.getRemoteAddr());
         logVo.setUserAgent(request.getHeader("user-agent"));
-        log.info("austin-aspect-log,request:{}", JSON.toJSONString(logVo));
+        log.info(JSON.toJSONString(logVo));
     }
 
     /**
@@ -107,7 +106,7 @@ public class AustinAspect {
      */
     public void printExceptionLog(Throwable ex) {
         JSONObject logVo = new JSONObject();
-        logVo.put("id", request.getAttribute(requestIdKey));
-        log.error("austin-aspect-log,exception:{}", JSON.toJSONString(logVo), ex);
+        logVo.put("id", request.getAttribute(REQUEST_ID_KEY));
+        log.error(JSON.toJSONString(logVo), ex);
     }
 }

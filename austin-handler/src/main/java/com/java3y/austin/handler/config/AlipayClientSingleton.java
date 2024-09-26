@@ -3,6 +3,7 @@ package com.java3y.austin.handler.config;
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayConfig;
 import com.alipay.api.DefaultAlipayClient;
+import com.java3y.austin.common.constant.SendChanelUrlConstant;
 import com.java3y.austin.common.dto.account.AlipayMiniProgramAccount;
 
 import java.util.HashMap;
@@ -16,7 +17,6 @@ import java.util.Map;
  */
 public class AlipayClientSingleton {
 
-    private static volatile DefaultAlipayClient alipayClientSingleton;
 
     private static Map<String, DefaultAlipayClient> alipayClientMap = new HashMap<>();
 
@@ -28,16 +28,14 @@ public class AlipayClientSingleton {
             synchronized (DefaultAlipayClient.class) {
                 if (!alipayClientMap.containsKey(alipayMiniProgramAccount.getAppId())) {
                     AlipayConfig alipayConfig = new AlipayConfig();
-                    alipayConfig.setServerUrl("https://openapi.alipaydev.com/gateway.do");
+                    alipayConfig.setServerUrl(SendChanelUrlConstant.ALI_MINI_PROGRAM_GATEWAY_URL);
                     alipayConfig.setAppId(alipayMiniProgramAccount.getAppId());
                     alipayConfig.setPrivateKey(alipayMiniProgramAccount.getPrivateKey());
                     alipayConfig.setFormat("json");
                     alipayConfig.setAlipayPublicKey(alipayMiniProgramAccount.getAlipayPublicKey());
                     alipayConfig.setCharset("utf-8");
                     alipayConfig.setSignType("RSA2");
-                    alipayClientSingleton = new DefaultAlipayClient(alipayConfig);
-                    alipayClientMap.put(alipayMiniProgramAccount.getAppId(), alipayClientSingleton);
-                    return alipayClientSingleton;
+                    alipayClientMap.put(alipayMiniProgramAccount.getAppId(), new DefaultAlipayClient(alipayConfig));
                 }
             }
         }

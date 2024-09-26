@@ -4,6 +4,7 @@ package com.java3y.austin.web.controller;
 import cn.binarywang.wx.miniapp.api.WxMaService;
 import cn.hutool.http.HttpUtil;
 import com.google.common.base.Throwables;
+import com.java3y.austin.common.constant.SendChanelUrlConstant;
 import com.java3y.austin.common.enums.RespStatusEnum;
 import com.java3y.austin.support.utils.AccountUtils;
 import com.java3y.austin.web.annotation.AustinAspect;
@@ -70,8 +71,10 @@ public class MiniProgramController {
     @AustinResult
     public CommonAmisVo queryDetailList(Integer id, String wxTemplateId) {
         if (Objects.isNull(id) || Objects.isNull(wxTemplateId)) {
-            throw new CommonException(RespStatusEnum.CLIENT_BAD_PARAMETERS);
+            log.info("id || wxTemplateId null! id:{},wxTemplateId:{}", id, wxTemplateId);
+            return CommonAmisVo.builder().build();
         }
+
         try {
             WxMaService wxMaService = accountUtils.getAccountById(id, WxMaService.class);
             List<TemplateInfo> templateList = wxMaService.getSubscribeService().getTemplateList();
@@ -92,7 +95,8 @@ public class MiniProgramController {
     @GetMapping("/sync/openid")
     @ApiOperation("登录凭证校验")
     public String syncOpenId(String code, String appId, String secret) {
-        String url = "https://api.weixin.qq.com/sns/jscode2session?appid=" + appId + "&secret=" + secret + "&js_code=" + code + "&grant_type=authorization_code";
+        String url = SendChanelUrlConstant.WE_CHAT_MINI_PROGRAM_OPENID_SYNC
+                .replace("<APPID>", appId).replace("<CODE>", code).replace("<SECRET>", secret);
         return HttpUtil.get(url);
     }
 

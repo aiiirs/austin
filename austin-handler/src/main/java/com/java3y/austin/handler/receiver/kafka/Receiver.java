@@ -2,11 +2,12 @@ package com.java3y.austin.handler.receiver.kafka;
 
 import cn.hutool.core.collection.CollUtil;
 import com.alibaba.fastjson.JSON;
+import com.java3y.austin.common.domain.RecallTaskInfo;
 import com.java3y.austin.common.domain.TaskInfo;
+import com.java3y.austin.handler.receiver.MessageReceiver;
 import com.java3y.austin.handler.receiver.service.ConsumeService;
 import com.java3y.austin.handler.utils.GroupIdMappingUtils;
 import com.java3y.austin.support.constans.MessageQueuePipeline;
-import com.java3y.austin.support.domain.MessageTemplate;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,7 @@ import java.util.Optional;
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @ConditionalOnProperty(name = "austin.mq.pipeline", havingValue = MessageQueuePipeline.KAFKA)
-public class Receiver {
+public class Receiver implements MessageReceiver {
     @Autowired
     private ConsumeService consumeService;
 
@@ -64,8 +65,8 @@ public class Receiver {
     public void recall(ConsumerRecord<?, String> consumerRecord) {
         Optional<String> kafkaMessage = Optional.ofNullable(consumerRecord.value());
         if (kafkaMessage.isPresent()) {
-            MessageTemplate messageTemplate = JSON.parseObject(kafkaMessage.get(), MessageTemplate.class);
-            consumeService.consume2recall(messageTemplate);
+            RecallTaskInfo recallTaskInfo = JSON.parseObject(kafkaMessage.get(), RecallTaskInfo.class);
+            consumeService.consume2recall(recallTaskInfo);
         }
     }
 }

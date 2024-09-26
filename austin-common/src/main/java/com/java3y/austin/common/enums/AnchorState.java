@@ -7,14 +7,15 @@ import lombok.ToString;
 
 /**
  * 打点信息枚举
+ * <p>
+ * com.java3y.austin.web.utils.AnchorStateUtils#getDescriptionByState
  *
  * @author 3y
  */
 @Getter
 @ToString
 @AllArgsConstructor
-public enum AnchorState {
-
+public enum AnchorState implements PowerfulEnum {
     /**
      * 消息接收成功（获取到请求）
      */
@@ -56,26 +57,9 @@ public enum AnchorState {
     /**
      * 点击（下发的消息被点击）
      */
-    CLICK(0100, "消息被点击"),
-    ;
+    CLICK(64, "消息被点击");
 
 
     private final Integer code;
     private final String description;
-
-    /**
-     * 通过code获取描述
-     *
-     * @param code
-     * @return
-     */
-    public static String getDescriptionByCode(Integer code) {
-        for (AnchorState anchorState : AnchorState.values()) {
-            if (anchorState.getCode().equals(code)) {
-                return anchorState.getDescription();
-            }
-        }
-        return "未知点位";
-    }
-
 }

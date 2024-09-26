@@ -5,6 +5,7 @@ import cn.hutool.http.Header;
 import cn.hutool.http.HttpRequest;
 import com.alibaba.fastjson.JSON;
 import com.google.common.base.Throwables;
+import com.java3y.austin.common.domain.RecallTaskInfo;
 import com.java3y.austin.common.domain.TaskInfo;
 import com.java3y.austin.common.dto.account.FeiShuRobotAccount;
 import com.java3y.austin.common.dto.model.FeiShuRobotContentModel;
@@ -13,8 +14,6 @@ import com.java3y.austin.common.enums.SendMessageType;
 import com.java3y.austin.handler.domain.feishu.FeiShuRobotParam;
 import com.java3y.austin.handler.domain.feishu.FeiShuRobotResult;
 import com.java3y.austin.handler.handler.BaseHandler;
-import com.java3y.austin.handler.handler.Handler;
-import com.java3y.austin.support.domain.MessageTemplate;
 import com.java3y.austin.support.utils.AccountUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,13 +23,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 企业微信群机器人 消息处理器
- *
+ * 飞书自定义机器人 消息处理器
+ * https://open.feishu.cn/document/client-docs/bot-v3/add-custom-bot
  * @author 3y
  */
 @Slf4j
 @Service
-public class FeiShuRobotHandler extends BaseHandler implements Handler {
+public class FeiShuRobotHandler extends BaseHandler{
 
     @Autowired
     private AccountUtils accountUtils;
@@ -60,6 +59,12 @@ public class FeiShuRobotHandler extends BaseHandler implements Handler {
         return false;
     }
 
+    /**
+     * 飞书自定义机器人 暂只支持文本消息下发，其他的消息类型的组装参数过于复杂。
+     *
+     * @param taskInfo
+     * @return
+     */
     private FeiShuRobotParam assembleParam(TaskInfo taskInfo) {
         FeiShuRobotContentModel contentModel = (FeiShuRobotContentModel) taskInfo.getContentModel();
 
@@ -90,9 +95,14 @@ public class FeiShuRobotHandler extends BaseHandler implements Handler {
         return param;
     }
 
-    @Override
-    public void recall(MessageTemplate messageTemplate) {
 
+    /**
+     * 飞书自定义机器人 不支持撤回消息
+     * https://open.feishu.cn/document/client-docs/bot-v3/add-custom-bot
+     * @param recallTaskInfo
+     */
+    @Override
+    public void recall(RecallTaskInfo recallTaskInfo) {
     }
 }
 

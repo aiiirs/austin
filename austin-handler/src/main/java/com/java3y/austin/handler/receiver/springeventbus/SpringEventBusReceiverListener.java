@@ -1,9 +1,10 @@
 package com.java3y.austin.handler.receiver.springeventbus;
 
 import com.alibaba.fastjson.JSON;
+import com.java3y.austin.common.domain.RecallTaskInfo;
 import com.java3y.austin.common.domain.TaskInfo;
+import com.java3y.austin.handler.receiver.MessageReceiver;
 import com.java3y.austin.support.constans.MessageQueuePipeline;
-import com.java3y.austin.support.domain.MessageTemplate;
 import com.java3y.austin.support.mq.springeventbus.AustinSpringEventBusEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,7 +20,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @ConditionalOnProperty(name = "austin.mq.pipeline", havingValue = MessageQueuePipeline.SPRING_EVENT_BUS)
-public class SpringEventBusReceiverListener implements ApplicationListener<AustinSpringEventBusEvent> {
+public class SpringEventBusReceiverListener implements ApplicationListener<AustinSpringEventBusEvent>, MessageReceiver {
 
     @Autowired
     private SpringEventBusReceiver springEventBusReceiver;
@@ -36,7 +37,7 @@ public class SpringEventBusReceiverListener implements ApplicationListener<Austi
         if (topic.equals(sendTopic)) {
             springEventBusReceiver.consume(JSON.parseArray(jsonValue, TaskInfo.class));
         } else if (topic.equals(recallTopic)) {
-            springEventBusReceiver.recall(JSON.parseObject(jsonValue, MessageTemplate.class));
+            springEventBusReceiver.recall(JSON.parseObject(jsonValue, RecallTaskInfo.class));
         }
     }
 }

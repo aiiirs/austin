@@ -27,12 +27,15 @@ public class LettuceRedisUtils {
 
     static {
         RedisURI redisUri = RedisURI.Builder.redis(AustinFlinkConstant.REDIS_IP)
-                .withPort(Integer.valueOf(AustinFlinkConstant.REDIS_PORT))
+                .withPort(Integer.parseInt(AustinFlinkConstant.REDIS_PORT))
                 .withPassword(AustinFlinkConstant.REDIS_PASSWORD.toCharArray())
                 .build();
         redisClient = RedisClient.create(redisUri);
     }
 
+    private LettuceRedisUtils() {
+
+    }
 
     /**
      * 封装pipeline操作
